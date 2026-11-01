@@ -165,10 +165,8 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
       data.results.forEach(movie => {
         const card = document.createElement("article");
        card.dataset.movieId = movie.id;
-card.style.cursor = "pointer";
-        card.style.cssText =
-          "background:#1c1c1c;border:1px solid #333;border-radius:10px;overflow:hidden;";
-
+card.style.cssText =
+  "background:#1c1c1c;border:1px solid #333;border-radius:10px;overflow:hidden;cursor:pointer;";
         if (movie.poster_path) {
           const poster = document.createElement("img");
           poster.src = "https://image.tmdb.org/t/p/w342" + movie.poster_path;
