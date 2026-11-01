@@ -164,6 +164,8 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
 
       data.results.forEach(movie => {
         const card = document.createElement("article");
+       card.dataset.movieId = movie.id;
+card.style.cursor = "pointer";
         card.style.cssText =
           "background:#1c1c1c;border:1px solid #333;border-radius:10px;overflow:hidden;";
 
@@ -201,6 +203,73 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
 
         info.append(title, year, rating, overview);
         card.appendChild(info);
+       card.addEventListener("click", async () => {
+  status.textContent = "Loading movie details...";
+
+  try {
+    const response = await fetch(API + "/movie/" + card.dataset.movieId);
+    if (!response.ok) throw new Error("Details failed");
+
+    const movie = await response.json();
+
+    const cast = (movie.credits?.cast || [])
+      .slice(0, 6)
+      .map(person => person.name)
+      .join(", ") || "Not available";
+
+    const director = (movie.credits?.crew || [])
+      .find(person => person.job === "Director")?.name || "Not available";
+
+    const year = movie.release_date
+      ? movie.release_date.slice(0, 4)
+      : "Unknown";
+
+    const genres = (movie.genres || [])
+      .map(g => g.name)
+      .join(" / ") || "Unknown";
+
+    const synopsis = movie.overview || "No synopsis available.";
+
+    current = {
+      title: movie.title,
+      year,
+      genre: genres,
+      rating: movie.vote_average
+        ? movie.vote_average.toFixed(1)
+        : "N/A",
+      director,
+      cast,
+      en: synopsis,
+      hi: synopsis,
+      exEn: "A detailed story explanation will be added later.",
+      exHi: "कहानी की विस्तृत व्याख्या बाद में जोड़ी जाएगी।"
+    };
+
+    active = "review";
+
+    $("home").classList.add("hidden");
+    $("detail").classList.remove("hidden");
+    $("live-movie-search").classList.add("hidden");
+
+    $("movieTitle").textContent = movie.title;
+    $("movieMeta").textContent =
+      `${year} • ${genres} • ★ ${current.rating}\nDirector: ${director}\nCast: ${cast}`;
+
+    showContent();
+
+    status.textContent = "";
+
+    $("backBtn").onclick = () => {
+      $("detail").classList.add("hidden");
+      $("home").classList.remove("hidden");
+      $("live-movie-search").classList.remove("hidden");
+      $("live-movie-search").scrollIntoView({ behavior: "smooth" });
+    };
+
+  } catch (error) {
+    status.textContent = "Could not load movie details. Please try again.";
+  }
+});
         results.appendChild(card);
       });
 
