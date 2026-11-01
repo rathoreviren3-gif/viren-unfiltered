@@ -274,7 +274,31 @@ if (movie.backdrop_path) {
     $("movieTitle").textContent = movie.title;
     $("movieMeta").textContent =
       `${year} • ${genres} • ★ ${current.rating}\nDirector: ${director}\nCast: ${cast}`;
+const oldCast = document.getElementById("cast-section");
+if (oldCast) oldCast.remove();
 
+const castSection = document.createElement("div");
+castSection.id = "cast-section";
+
+castSection.innerHTML = `
+  <h3>Cast & Crew</h3>
+  <div style="display:flex;gap:12px;overflow-x:auto;padding:10px 0;">
+    ${(movie.credits?.cast || []).slice(0, 8).map(person => `
+      <div style="min-width:90px;text-align:center;">
+        <img
+          src="${person.profile_path
+            ? "https://image.tmdb.org/t/p/w185" + person.profile_path
+            : "https://placehold.co/80x80?text=Actor"}"
+          alt="${person.name}"
+          style="width:80px;height:80px;object-fit:cover;border-radius:50%;background:#333;"
+        >
+        <p style="font-size:12px;">${person.name}</p>
+      </div>
+    `).join("")}
+  </div>
+`;
+
+$("detail").appendChild(castSection);
     showContent();
 
     status.textContent = "";
