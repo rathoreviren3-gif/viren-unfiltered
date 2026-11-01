@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090909">
+<meta name="description" content="Viren Unfiltered — movie reviews, synopses and story explainers in Hindi and English.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Viren Unfiltered</title>
+<style>
+:root{--bg:#090909;--panel:#181818;--red:#e50914;--muted:#aaa;--line:#303030}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Arial,Helvetica,sans-serif}
+header{padding:22px 18px 16px;background:linear-gradient(120deg,#210508,#090909 65%);border-bottom:1px solid #321015;position:sticky;top:0;z-index:3}
+.brand{font-size:12px;letter-spacing:4px;color:#ff4550;font-weight:800}.name{font-size:29px;font-weight:900;letter-spacing:1px;margin-top:3px}
+.tag{font-size:10px;letter-spacing:1.5px;color:#aaa;margin-top:4px}
+.headerrow{display:flex;justify-content:space-between;align-items:center;gap:12px}
+button,.btn{background:var(--red);color:white;border:0;border-radius:9px;padding:11px 14px;font-weight:700;cursor:pointer}
+button.secondary{background:#292929;border:1px solid #444}
+main{max-width:760px;margin:auto;padding:18px}
+h2{font-size:19px;margin:8px 0 12px}.muted{color:var(--muted)}.small{font-size:12px}
+input{width:100%;padding:14px;border:1px solid #444;border-radius:10px;background:#151515;color:white;font-size:16px;outline:none}
+input:focus{border-color:var(--red)}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.movie{background:var(--panel);border:1px solid #292929;border-radius:13px;overflow:hidden;cursor:pointer}
+.poster{height:112px;background:linear-gradient(135deg,#4b0b12,#171717 70%);display:flex;align-items:center;justify-content:center;font-size:34px}
+.moviebody{padding:12px}.movie h3{font-size:15px;margin:0 0 6px}.movie p{font-size:11px;color:#aaa;margin:0}
+.rating{color:#ffd166;font-size:12px;margin-top:8px}
+.hidden{display:none!important}
+.back{margin-bottom:14px}
+.tabs{display:flex;gap:8px;margin:15px 0}.tabs button{flex:1}
+.panel{background:var(--panel);border:1px solid #292929;border-radius:13px;padding:16px;margin:12px 0}
+.panel h3{font-size:11px;letter-spacing:1.2px;color:#ff4650;margin:0 0 10px}
+.panel p{font-size:14px;line-height:1.65;margin:0;white-space:pre-wrap}
+.meta{color:#bbb;font-size:12px;line-height:1.7;margin-top:7px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+footer{text-align:center;color:#777;font-size:10px;padding:25px 10px}
+.notice{background:#211b0b;border:1px solid #59451b;color:#e8d6a2;padding:12px;border-radius:10px;font-size:12px;line-height:1.5;margin-top:16px}
+@media(min-width:600px){.poster{height:145px}}
+</style>
+</head>
+<body>
+<header><div class="headerrow"><div><div class="brand">VIREN</div><div class="name">UNFILTERED</div><div class="tag" id="tagline">MOVIES • REVIEWS • EXPLAINERS</div></div><button class="secondary" id="langBtn">हिंदी</button></div></header>
+<main>
+<section id="home">
+<h2 id="welcome">Find your next movie</h2>
+<input id="search" type="search" placeholder="Search a movie or series..." autocomplete="off">
+<div class="sectionhead"><strong id="featured">FEATURED MOVIES</strong><span class="small muted" id="count"></span></div>
+<div class="grid" id="movieGrid"></div>
+<div class="notice" id="note">Starter edition: sample movie information is built in. Ratings are illustrative; verify details before publishing a review.</div>
+</section>
+<section id="detail" class="hidden">
+<button class="secondary back" id="backBtn">← Back</button>
+<h2 id="movieTitle"></h2><div class="meta" id="movieMeta"></div>
+<div class="tabs"><button id="reviewTab">Review</button><button class="secondary" id="explainTab">Explainer</button><button class="secondary" id="scriptTab">YouTube Script</button></div>
+<div id="detailContent"></div>
+<div class="actions"><button id="copyBtn">Copy text</button><button class="secondary" id="shareBtn">Share</button></div>
+</section>
+</main>
+<footer>VIREN UNFILTERED • FAN-MADE MOVIE GUIDE • NOT AFFILIATED WITH FILM STUDIOS</footer>
+<script>
+const films=[
+{title:"Inception",year:"2010",genre:"Sci-Fi / Thriller",rating:"8.8",director:"Christopher Nolan",cast:"Leonardo DiCaprio, Joseph Gordon-Levitt",en:"A skilled thief enters people's dreams to steal secrets. He is offered a difficult mission: plant an idea instead of stealing one.",hi:"एक कुशल चोर लोगों के सपनों में जाकर उनके राज़ चुराता है। उसे एक मुश्किल काम मिलता है—किसी के मन से विचार चुराने के बजाय उसमें एक नया विचार डालना।",exEn:"The story explores dreams within dreams, memory, guilt and the difficulty of knowing what is real. Watch how each dream layer follows its own rules and how time behaves differently.",exHi:"यह कहानी सपनों की कई परतों, यादों, अपराधबोध और वास्तविकता को समझने की मुश्किल पर आधारित है। ध्यान दें कि हर सपने के स्तर के अपने नियम हैं और समय अलग तरह से चलता है।"},
+{title:"Interstellar",year:"2014",genre:"Sci-Fi / Drama",rating:"8.7",director:"Christopher Nolan",cast:"Matthew McConaughey, Anne Hathaway",en:"As Earth faces a major environmental crisis, a pilot joins a space mission to search for a home where humanity can survive.",hi:"जब पृथ्वी पर पर्यावरण का बड़ा संकट आता है, तब एक पायलट मानवता के लिए नया घर खोजने के अंतरिक्ष मिशन में शामिल होता है।",exEn:"The film combines space exploration with a family story. Its themes include time, sacrifice, scientific curiosity and the bond between a parent and child.",exHi:"यह फिल्म अंतरिक्ष की खोज को एक पारिवारिक कहानी से जोड़ती है। इसके मुख्य विषय समय, त्याग, वैज्ञानिक जिज्ञासा और माता-पिता व बच्चे का रिश्ता हैं।"},
+{title:"The Dark Knight",year:"2008",genre:"Action / Crime",rating:"9.0",director:"Christopher Nolan",cast:"Christian Bale, Heath Ledger",en:"Batman faces a criminal mastermind whose unpredictable actions push Gotham's people and institutions into a moral crisis.",hi:"बैटमैन का सामना ऐसे अपराधी से होता है जिसकी अप्रत्याशित चालें गोथम के लोगों और संस्थाओं को नैतिक संकट में डाल देती हैं।",exEn:"Beyond superhero action, the story explores fear, order, moral choices and the pressure placed on people who try to protect a city.",exHi:"सुपरहीरो एक्शन से आगे, यह कहानी डर, व्यवस्था, नैतिक फैसलों और शहर की रक्षा करने वालों पर पड़ने वाले दबाव को दिखाती है।"},
+{title:"3 Idiots",year:"2009",genre:"Comedy / Drama",rating:"8.4",director:"Rajkumar Hirani",cast:"Aamir Khan, R. Madhavan, Sharman Joshi",en:"Three engineering students form a close friendship while dealing with academic pressure, expectations and the search for meaningful work.",hi:"इंजीनियरिंग के तीन छात्र पढ़ाई के दबाव, परिवार की उम्मीदों और अपने पसंदीदा काम की तलाश के बीच गहरी दोस्ती बनाते हैं।",exEn:"The film questions learning only for marks and status. It celebrates curiosity, friendship and choosing a path based on genuine interest and ability.",exHi:"यह फिल्म सिर्फ नंबर और रुतबे के लिए पढ़ने पर सवाल उठाती है। यह जिज्ञासा, दोस्ती और अपनी असली रुचि के अनुसार रास्ता चुनने का संदेश देती है।"},
+{title:"The Matrix",year:"1999",genre:"Sci-Fi / Action",rating:"8.7",director:"The Wachowskis",cast:"Keanu Reeves, Laurence Fishburne",en:"A computer programmer discovers that the world he knows may not be what it seems, and is drawn into a struggle over human freedom.",hi:"एक कंप्यूटर प्रोग्रामर को पता चलता है कि उसकी जानी-पहचानी दुनिया वैसी नहीं हो सकती जैसी दिखती है। वह इंसानी आज़ादी की लड़ाई में शामिल हो जाता है।",exEn:"The film asks questions about reality, choice, control and identity. Its science-fiction setting gives those philosophical questions a thrilling form.",exHi:"यह फिल्म वास्तविकता, चुनाव, नियंत्रण और पहचान पर सवाल उठाती है। इसकी साइंस-फिक्शन दुनिया इन दार्शनिक सवालों को रोमांचक रूप देती है।"}
+];
+let lang="en",current=null,active="review",currentText="";
+const $=id=>document.getElementById(id);
+function tr(en,hi){return lang==="hi"?hi:en}
+function render(){
+ const q=$("search").value.toLowerCase();
+ const list=films.filter(f=>f.title.toLowerCase().includes(q)||f.genre.toLowerCase().includes(q));
+ $("movieGrid").innerHTML=list.map(f=>`<article class="movie" data-title="${f.title}"><div class="poster">🎬</div><div class="moviebody"><h3>${f.title}</h3><p>${f.year} • ${f.genre}</p><div class="rating">★ ${f.rating}</div></div></article>`).join("");
+ $("count").textContent=list.length+" "+tr("titles","फिल्में");
+ document.querySelectorAll(".movie").forEach(el=>el.onclick=()=>openFilm(films.find(f=>f.title===el.dataset.title)));
+}
+function openFilm(f){current=f;active="review";$("home").classList.add("hidden");$("detail").classList.remove("hidden");$("movieTitle").textContent=f.title;$("movieMeta").textContent=`${f.year} • ${f.genre} • ★ ${f.rating}\n${tr("Director","निर्देशक")}: ${f.director}\n${tr("Cast","कलाकार")}: ${f.cast}`;showContent()}
+function showContent(){
+ const f=current;let title="",body="";
+ if(active==="review"){title=tr("SPOILER-FREE SYNOPSIS","बिना स्पॉइलर कहानी");body=lang==="hi"?f.hi:f.en;}
+ else if(active==="explain"){title=tr("STORY EXPLAINED","कहानी की व्याख्या");body=lang==="hi"?f.exHi:f.exEn;}
+ else{title=tr("YOUTUBE REVIEW SCRIPT STARTER","यूट्यूब रिव्यू स्क्रिप्ट");body=lang==="hi"?`नमस्कार दोस्तों, स्वागत है Viren Unfiltered में!\n\nआज हम बात करेंगे ${f.title} की।\n\nकहानी: ${f.hi}\n\nमेरी राय: इस फिल्म में कहानी, अभिनय, निर्देशन और संगीत पर ध्यान देना ज़रूरी है।\n\nआपकी राय क्या है? कमेंट में बताइए। वीडियो पसंद आए तो लाइक और सब्सक्राइब करें।`:`Hello everyone, welcome to Viren Unfiltered!\n\nToday we're talking about ${f.title}.\n\nSynopsis: ${f.en}\n\nMy review: Consider the story, performances, direction and music before deciding your rating.\n\nWhat did you think? Share your opinion in the comments, and subscribe for more reviews.`;}
+ currentText=body;
+ $("detailContent").innerHTML=`<div class="panel"><h3>${title}</h3><p>${escapeHtml(body)}</p></div>`+
+ (active==="review"?`<div class="panel"><h3>${tr("MOVIE INFORMATION","फिल्म की जानकारी")}</h3><p>${tr("Director","निर्देशक")}: ${escapeHtml(f.director)}\n${tr("Cast","कलाकार")}: ${escapeHtml(f.cast)}\n${tr("Rating shown in starter data","स्टार्टर डेटा में रेटिंग")}: ★ ${f.rating}/10</p></div>`:"");
+ $("reviewTab").className=active==="review"?"":"secondary";$("explainTab").className=active==="explain"?"":"secondary";$("scriptTab").className=active==="script"?"":"secondary";
+ $("copyBtn").textContent=tr("Copy text","टेक्स्ट कॉपी करें");
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+$("search").addEventListener("input",render);
+$("langBtn").onclick=()=>{lang=lang==="en"?"hi":"en";$("langBtn").textContent=lang==="en"?"हिंदी":"English";$("tagline").textContent=tr("MOVIES • REVIEWS • EXPLAINERS","फिल्में • रिव्यू • एक्सप्लेनर");$("welcome").textContent=tr("Find your next movie","अपनी अगली फिल्म खोजें");$("featured").textContent=tr("FEATURED MOVIES","लोकप्रिय फिल्में");$("search").placeholder=tr("Search a movie or series...","फिल्म या सीरीज़ खोजें...");$("note").textContent=tr("Starter edition: sample movie information is built in. Ratings are illustrative; verify details before publishing a review.","स्टार्टर संस्करण में उदाहरण के लिए फिल्म जानकारी दी गई है। रेटिंग सांकेतिक हैं; रिव्यू प्रकाशित करने से पहले जांचें।");if(current){$("movieMeta").textContent=`${current.year} • ${current.genre} • ★ ${current.rating}\n${tr("Director","निर्देशक")}: ${current.director}\n${tr("Cast","कलाकार")}: ${current.cast}`;showContent()}render();};
+$("backBtn").onclick=()=>{$("detail").classList.add("hidden");$("home").classList.remove("hidden");};
+$("reviewTab").onclick=()=>{active="review";showContent()};$("explainTab").onclick=()=>{active="explain";showContent()};$("scriptTab").onclick=()=>{active="script";showContent()};
+$("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText(currentText);$("copyBtn").textContent=tr("Copied!","कॉपी हो गया!");}catch(e){alert(currentText)}};
+$("shareBtn").onclick=async()=>{if(navigator.share){try{await navigator.share({title:current.title,text:currentText})}catch(e){}}else{await navigator.clipboard.writeText(current.title+"\n"+currentText);alert(tr("Copied for sharing","शेयर करने के लिए कॉपी किया गया"));}};
+render();
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
+</script>
+</body></html>
