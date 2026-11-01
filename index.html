@@ -77,7 +77,36 @@ function render(){
  $("count").textContent=list.length+" "+tr("titles","फिल्में");
  document.querySelectorAll(".movie").forEach(el=>el.onclick=()=>openFilm(films.find(f=>f.title===el.dataset.title)));
 }
-function openFilm(f){current=f;active="review";$("home").classList.add("hidden");$("detail").classList.remove("hidden");$("movieTitle").textContent=f.title;$("movieMeta").textContent=`${f.year} • ${f.genre} • ★ ${f.rating}\n${tr("Director","निर्देशक")}: ${f.director}\n${tr("Cast","कलाकार")}: ${f.cast}`;showContent()}
+function openFilm(f){current=f;active="review";$("home").classList.add("hidden");$("detail").classList.remove("hidden");$("movieTitle").textContent = movie.title;
+$("movieMeta").textContent =
+  `${year} • ${genres} • ★ ${current.rating}\nDirector: ${director}\nCast: ${cast}`;
+
+const oldCast = document.getElementById("cast-section");
+if (oldCast) oldCast.remove();
+
+const castSection = document.createElement("div");
+castSection.id = "cast-section";
+castSection.innerHTML = `
+  <h3>Cast & Crew</h3>
+  <div style="display:flex;gap:12px;overflow-x:auto;padding:10px 0;">
+    ${(movie.credits?.cast || []).slice(0, 8).map(person => `
+      <div style="min-width:90px;text-align:center;">
+        <img
+          src="${person.profile_path
+            ? "https://image.tmdb.org/t/p/w185" + person.profile_path
+            : ""}"
+          alt="${person.name}"
+          style="width:80px;height:80px;object-fit:cover;border-radius:50%;background:#333;"
+        >
+        <p style="font-size:12px;">${person.name}</p>
+      </div>
+    `).join("")}
+  </div>
+`;
+
+$("detail").appendChild(castSection);
+
+showContent();}
 function showContent(){
  const f=current;let title="",body="";
  if(active==="review"){title=tr("SPOILER-FREE SYNOPSIS","बिना स्पॉइलर कहानी");body=lang==="hi"?f.hi:f.en;}
