@@ -248,6 +248,18 @@ card.style.cssText =
     $("home").classList.add("hidden");
     $("detail").classList.remove("hidden");
     $("live-movie-search").classList.add("hidden");
+   const oldBackdrop = document.getElementById("movie-backdrop");
+if (oldBackdrop) oldBackdrop.remove();
+
+if (movie.backdrop_path) {
+  const backdrop = document.createElement("img");
+  backdrop.id = "movie-backdrop";
+  backdrop.src = "https://image.tmdb.org/t/p/w1280" + movie.backdrop_path;
+  backdrop.alt = movie.title;
+  backdrop.style.cssText =
+    "width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin-bottom:15px;display:block;";
+  $("detail").prepend(backdrop);
+}
 
     $("movieTitle").textContent = movie.title;
     $("movieMeta").textContent =
