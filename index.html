@@ -99,4 +99,116 @@ $("shareBtn").onclick=async()=>{if(navigator.share){try{await navigator.share({t
 render();
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 </script>
+
+<section id="live-movie-search" style="padding:24px 16px;background:#101010;color:white;font-family:Arial,sans-serif;">
+  <h2 style="color:#e50914;">🎬 Explore Movies</h2>
+  <p>Search movies from around the world.</p>
+
+  <form id="movie-search-form" style="display:flex;gap:8px;flex-wrap:wrap;">
+    <input
+      id="movie-search-input"
+      type="search"
+      placeholder="Enter movie name..."
+      required
+      style="flex:1;min-width:180px;padding:13px;border-radius:8px;border:1px solid #555;background:#222;color:white;"
+    >
+    <button type="submit" style="padding:13px 18px;background:#e50914;color:white;border:0;border-radius:8px;font-weight:bold;">
+      Search
+    </button>
+  </form>
+
+  <p id="movie-search-status" aria-live="polite"></p>
+  <div id="movie-search-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:16px;"></div>
+
+  <p style="font-size:12px;color:#aaa;margin-top:24px;">
+    Movie data and images provided by TMDB.
+    <br>
+    This product uses the TMDB API but is not endorsed or certified by TMDB.
+    <br>
+    <a href="https://www.themoviedb.org/" target="_blank" rel="noopener" style="color:#aaa;">Visit TMDB</a>
+  </p>
+</section>
+
+<script>
+(() => {
+  const API = "https://viren-unfiltered-api.rathoreviren3.workers.dev";
+  const form = document.getElementById("movie-search-form");
+  const input = document.getElementById("movie-search-input");
+  const results = document.getElementById("movie-search-results");
+  const status = document.getElementById("movie-search-status");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const query = input.value.trim();
+    if (!query) return;
+
+    status.textContent = "Searching movies...";
+    results.replaceChildren();
+
+    try {
+      const response = await fetch(
+        API + "/search?query=" + encodeURIComponent(query)
+      );
+
+      if (!response.ok) throw new Error("Search failed");
+
+      const data = await response.json();
+
+      if (!data.results || data.results.length === 0) {
+        status.textContent = "No movies found. Try another title.";
+        return;
+      }
+
+      status.textContent = data.total_results + " results found.";
+
+      data.results.forEach(movie => {
+        const card = document.createElement("article");
+        card.style.cssText =
+          "background:#1c1c1c;border:1px solid #333;border-radius:10px;overflow:hidden;";
+
+        if (movie.poster_path) {
+          const poster = document.createElement("img");
+          poster.src = "https://image.tmdb.org/t/p/w342" + movie.poster_path;
+          poster.alt = movie.title + " poster";
+          poster.loading = "lazy";
+          poster.style.cssText = "width:100%;display:block;";
+          card.appendChild(poster);
+        }
+
+        const info = document.createElement("div");
+        info.style.cssText = "padding:12px;";
+
+        const title = document.createElement("h3");
+        title.textContent = movie.title;
+        title.style.cssText = "font-size:16px;margin:0 0 8px;";
+
+        const year = document.createElement("p");
+        year.textContent = movie.release_date
+          ? movie.release_date.slice(0, 4)
+          : "Release date unavailable";
+        year.style.color = "#bbb";
+
+        const rating = document.createElement("p");
+        rating.textContent = "⭐ " +
+          (movie.vote_average ? movie.vote_average.toFixed(1) : "Not rated");
+        rating.style.color = "#f5c518";
+
+        const overview = document.createElement("p");
+        overview.textContent = movie.overview || "No description available.";
+        overview.style.cssText =
+          "font-size:13px;line-height:1.5;color:#ccc;";
+
+        info.append(title, year, rating, overview);
+        card.appendChild(info);
+        results.appendChild(card);
+      });
+
+    } catch (error) {
+      status.textContent = "Could not load movies. Please try again.";
+    }
+  });
+})();
+                                         </script>
+ 
 </body></html>
