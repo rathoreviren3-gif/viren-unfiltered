@@ -96,6 +96,10 @@ async function generateExplanation(){
     body:JSON.stringify({
      title:f.title,
      synopsis:f.en||f.hi,
+     details: mode === "ending"
+  ? ($("endingDetails")?.value.trim() || "")
+  : "",
+mode: mode,
      language:lang
     })
    }
