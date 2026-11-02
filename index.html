@@ -175,7 +175,12 @@ function showContent(){
    <p>${escapeHtml(body).replace(/\n/g,"<br>")}</p>
    ${active==="explain"?
     `<button id="generateAI" class="primary">Generate AI Explanation</button>
-     <p id="aiStatus"></p>`:""}
+<p id="aiStatus"></p>
+<hr>
+<p><strong>⚠️ Spoilers ahead!</strong> Ending discussion.</p>
+<textarea id="endingDetails" placeholder="Enter movie ending details..." rows="4"></textarea>
+<button id="generateEnding" class="secondary">Ending Explained</button>
+<p id="endingStatus"></p>`:""}
   </div>`+
  (active==="review"?
   `<div class="panel">
