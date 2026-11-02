@@ -237,7 +237,15 @@ card.style.cssText =
       .join(" / ") || "Unknown";
 
     const synopsis = movie.overview || "No synopsis available.";
+const trailerButton = document.createElement("button");
+trailerButton.textContent = "▶ Find Trailer on YouTube";
+trailerButton.style.cssText =
+  "background:#e50914;color:white;border:0;padding:12px 18px;border-radius:8px;font-size:15px;margin:15px 0;cursor:pointer;";
 
+trailerButton.onclick = () => {
+  const query = encodeURIComponent(movie.title + " official trailer");
+  window.open("https://www.youtube.com/results?search_query=" + query, "_blank");
+};
     current = {
       title: movie.title,
       year,
@@ -299,6 +307,11 @@ castSection.innerHTML = `
 `;
 
 $("detail").appendChild(castSection);
+   const oldTrailerButton = document.getElementById("trailer-button");
+if (oldTrailerButton) oldTrailerButton.remove();
+
+trailerButton.id = "trailer-button";
+$("detail").appendChild(trailerButton);
     showContent();
 
     status.textContent = "";
