@@ -151,10 +151,14 @@ function showContent(){
   body=lang==="hi"?f.hi:f.en;
  }
  else if(active==="explain"){
-  title=tr("STORY EXPLAINED","कहानी की व्याख्या");
-  body=lang==="hi"
-   ?(f.aiExHi||"Tap Generate AI Explanation to create a detailed explanation.")
-   :(f.aiExEn||"Tap Generate AI Explanation to create a detailed explanation.");
+  title=f.aiEnding
+    ?tr("ENDING EXPLAINED","अंत की व्याख्या")
+    :tr("STORY EXPLAINED","कहानी की व्याख्या");
+
+  body=f.aiEnding
+    ||(lang==="hi"
+      ?(f.aiExHi||"Tap Generate AI Explanation to create a detailed explanation.")
+      :(f.aiExEn||"Tap Generate AI Explanation to create a detailed explanation."));
  }
  else{
   title=tr("YOUTUBE REVIEW SCRIPT STARTER","यूट्यूब रिव्यू स्क्रिप्ट");
