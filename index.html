@@ -68,6 +68,59 @@ const films=[
 {title:"The Matrix",year:"1999",genre:"Sci-Fi / Action",rating:"8.7",director:"The Wachowskis",cast:"Keanu Reeves, Laurence Fishburne",en:"A computer programmer discovers that the world he knows may not be what it seems, and is drawn into a struggle over human freedom.",hi:"एक कंप्यूटर प्रोग्रामर को पता चलता है कि उसकी जानी-पहचानी दुनिया वैसी नहीं हो सकती जैसी दिखती है। वह इंसानी आज़ादी की लड़ाई में शामिल हो जाता है।",exEn:"The film asks questions about reality, choice, control and identity. Its science-fiction setting gives those philosophical questions a thrilling form.",exHi:"यह फिल्म वास्तविकता, चुनाव, नियंत्रण और पहचान पर सवाल उठाती है। इसकी साइंस-फिक्शन दुनिया इन दार्शनिक सवालों को रोमांचक रूप देती है।"}
 ];
 let lang="en",current=null,active="review",currentText="";
+ 
+async function generateExplanation(){
+ const f=current;
+ const button=$("generateAI");
+ const status=$("aiStatus");
+
+ if(!f||!button||!status)return;
+
+ const cacheKey=lang==="hi"?"aiExHi":"aiExEn";
+
+ if(f[cacheKey]){
+  showContent();
+  return;
+ }
+
+ button.disabled=true;
+ button.textContent="Generating...";
+ status.textContent="Please wait. Gemini AI is preparing your explanation.";
+
+ try{
+  const response=await fetch(
+   "https://viren-unfiltered-ai.rathoreviren3.workers.dev",
+   {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     title:f.title,
+     synopsis:f.en||f.hi,
+     language:lang
+    })
+   }
+  );
+
+  const data=await response.json();
+
+  if(!response.ok){
+   throw new Error(data.details||data.error||"AI request failed.");
+  }
+
+  if(!data.explanation){
+   throw new Error("No explanation received.");
+  }
+
+  f[cacheKey]=data.explanation;
+  showContent();
+
+ }catch(error){
+  button.disabled=false;
+  button.textContent="Try Again";
+  status.textContent="Error: "+error.message;
+ }
+}
+ 
 const $=id=>document.getElementById(id);
 function tr(en,hi){return lang==="hi"?hi:en}
 function render(){
@@ -88,17 +141,56 @@ Director: ${f.director}
 Cast: ${f.cast}`;
   showContent();
 }
+
 function showContent(){
- const f=current;let title="",body="";
- if(active==="review"){title=tr("SPOILER-FREE SYNOPSIS","बिना स्पॉइलर कहानी");body=lang==="hi"?f.hi:f.en;}
- else if(active==="explain"){title=tr("STORY EXPLAINED","कहानी की व्याख्या");body=lang==="hi"?f.exHi:f.exEn;}
- else{title=tr("YOUTUBE REVIEW SCRIPT STARTER","यूट्यूब रिव्यू स्क्रिप्ट");body=lang==="hi"?`नमस्कार दोस्तों, स्वागत है Viren Unfiltered में!\n\nआज हम बात करेंगे ${f.title} की।\n\nकहानी: ${f.hi}\n\nमेरी राय: इस फिल्म में कहानी, अभिनय, निर्देशन और संगीत पर ध्यान देना ज़रूरी है।\n\nआपकी राय क्या है? कमेंट में बताइए। वीडियो पसंद आए तो लाइक और सब्सक्राइब करें।`:`Hello everyone, welcome to Viren Unfiltered!\n\nToday we're talking about ${f.title}.\n\nSynopsis: ${f.en}\n\nMy review: Consider the story, performances, direction and music before deciding your rating.\n\nWhat did you think? Share your opinion in the comments, and subscribe for more reviews.`;}
+ const f=current;
+ let title="",body="";
+
+ if(active==="review"){
+  title=tr("SPOILER-FREE SYNOPSIS","बिना स्पॉइलर कहानी");
+  body=lang==="hi"?f.hi:f.en;
+ }
+ else if(active==="explain"){
+  title=tr("STORY EXPLAINED","कहानी की व्याख्या");
+  body=lang==="hi"
+   ?(f.aiExHi||"Tap Generate AI Explanation to create a detailed explanation.")
+   :(f.aiExEn||"Tap Generate AI Explanation to create a detailed explanation.");
+ }
+ else{
+  title=tr("YOUTUBE REVIEW SCRIPT STARTER","यूट्यूब रिव्यू स्क्रिप्ट");
+  body=lang==="hi"
+   ?`नमस्कार दोस्तों, स्वागत है Viren Unfiltered में!\n\nआज हम बात करेंगे ${f.title} की।\n\nकहानी: ${f.hi}\n\nमेरी राय: इस फिल्म में कहानी, अभिनय, निर्देशन और संगीत पर ध्यान देना ज़रूरी है।\n\nआपकी राय क्या है? कमेंट में बताइए। वीडियो पसंद आए तो लाइक और सब्सक्राइब करें।`
+   :`Hello everyone, welcome to Viren Unfiltered!\n\nToday we're talking about ${f.title}.\n\nSynopsis: ${f.en}\n\nMy review: Consider the story, performances, direction and music before deciding your rating.\n\nWhat did you think? Share your opinion in the comments, and subscribe for more reviews.`;
+ }
+
  currentText=body;
- $("detailContent").innerHTML=`<div class="panel"><h3>${title}</h3><p>${escapeHtml(body)}</p></div>`+
- (active==="review"?`<div class="panel"><h3>${tr("MOVIE INFORMATION","फिल्म की जानकारी")}</h3><p>${tr("Director","निर्देशक")}: ${escapeHtml(f.director)}\n${tr("Cast","कलाकार")}: ${escapeHtml(f.cast)}\n${tr("Rating shown in starter data","स्टार्टर डेटा में रेटिंग")}: ★ ${f.rating}/10</p></div>`:"");
- $("reviewTab").className=active==="review"?"":"secondary";$("explainTab").className=active==="explain"?"":"secondary";$("scriptTab").className=active==="script"?"":"secondary";
+
+ $("detailContent").innerHTML=
+ `<div class="panel">
+   <h3>${title}</h3>
+   <p>${escapeHtml(body).replace(/\n/g,"<br>")}</p>
+   ${active==="explain"?
+    `<button id="generateAI" class="primary">Generate AI Explanation</button>
+     <p id="aiStatus"></p>`:""}
+  </div>`+
+ (active==="review"?
+  `<div class="panel">
+    <h3>${tr("MOVIE INFORMATION","फिल्म की जानकारी")}</h3>
+    <p>${tr("Director","निर्देशक")}: ${escapeHtml(f.director)}
+    \n${tr("Cast","कलाकार")}: ${escapeHtml(f.cast)}
+    \n${tr("Rating shown in starter data","स्टार्टर डेटा में रेटिंग")}: ★ ${f.rating}/10</p>
+   </div>`:"");
+
+ $("reviewTab").className=active==="review"?"":"secondary";
+ $("explainTab").className=active==="explain"?"":"secondary";
+ $("scriptTab").className=active==="script"?"":"secondary";
  $("copyBtn").textContent=tr("Copy text","टेक्स्ट कॉपी करें");
+
+ if(active==="explain"){
+  $("generateAI").addEventListener("click",generateExplanation);
+ }
 }
+ 
 function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 $("search").addEventListener("input",render);
 $("langBtn").onclick=()=>{lang=lang==="en"?"hi":"en";$("langBtn").textContent=lang==="en"?"हिंदी":"English";$("tagline").textContent=tr("MOVIES • REVIEWS • EXPLAINERS","फिल्में • रिव्यू • एक्सप्लेनर");$("welcome").textContent=tr("Find your next movie","अपनी अगली फिल्म खोजें");$("featured").textContent=tr("FEATURED MOVIES","लोकप्रिय फिल्में");$("search").placeholder=tr("Search a movie or series...","फिल्म या सीरीज़ खोजें...");$("note").textContent=tr("Starter edition: sample movie information is built in. Ratings are illustrative; verify details before publishing a review.","स्टार्टर संस्करण में उदाहरण के लिए फिल्म जानकारी दी गई है। रेटिंग सांकेतिक हैं; रिव्यू प्रकाशित करने से पहले जांचें।");if(current){$("movieMeta").textContent=`${current.year} • ${current.genre} • ★ ${current.rating}\n${tr("Director","निर्देशक")}: ${current.director}\n${tr("Cast","कलाकार")}: ${current.cast}`;showContent()}render();};
