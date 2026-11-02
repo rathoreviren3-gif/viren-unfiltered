@@ -247,6 +247,7 @@ card.style.cssText =
       .then(data => data.responseData?.translatedText || synopsis)
       .catch(() => synopsis)
   : "कहानी का विवरण उपलब्ध नहीं है।";
+   console.log("Hindi translation:", hindiSynopsis);
 const trailerButton = document.createElement("button");
 trailerButton.textContent = "▶ Find Trailer on YouTube";
 trailerButton.style.cssText =
