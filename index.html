@@ -237,7 +237,16 @@ card.style.cssText =
       .join(" / ") || "Unknown";
 
     const synopsis = movie.overview || "No synopsis available.";
-   const hindiSynopsis = synopsis;
+   const hindiSynopsis = synopsis
+  ? await fetch(
+      "https://api.mymemory.translated.net/get?q=" +
+      encodeURIComponent(synopsis) +
+      "&langpair=en|hi"
+    )
+      .then(response => response.json())
+      .then(data => data.responseData?.translatedText || synopsis)
+      .catch(() => synopsis)
+  : "कहानी का विवरण उपलब्ध नहीं है।";
 const trailerButton = document.createElement("button");
 trailerButton.textContent = "▶ Find Trailer on YouTube";
 trailerButton.style.cssText =
