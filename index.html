@@ -237,6 +237,7 @@ card.style.cssText =
       .join(" / ") || "Unknown";
 
     const synopsis = movie.overview || "No synopsis available.";
+   const hindiSynopsis = synopsis;
 const trailerButton = document.createElement("button");
 trailerButton.textContent = "▶ Find Trailer on YouTube";
 trailerButton.style.cssText =
@@ -256,7 +257,7 @@ trailerButton.onclick = () => {
       director,
       cast,
       en: synopsis,
-      hi: synopsis,
+      hi: hindiSynopsis,
       exEn: "A detailed story explanation will be added later.",
       exHi: "कहानी की विस्तृत व्याख्या बाद में जोड़ी जाएगी।"
     };
