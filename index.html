@@ -526,6 +526,7 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
   <p id="watchlist-empty" style="color:#aaa;">Your watchlist is empty.</p>
 </section>
  <script>
+
 function renderWatchlist() {
   const container = document.getElementById("watchlist-movies");
   const empty = document.getElementById("watchlist-empty");
@@ -533,6 +534,7 @@ function renderWatchlist() {
   if (!container || !empty) return;
 
   let movies = [];
+
   try {
     movies = JSON.parse(
       localStorage.getItem("virenWatchlist") || "[]"
@@ -546,6 +548,7 @@ function renderWatchlist() {
 
   movies.forEach(movie => {
     const card = document.createElement("div");
+
     card.style.cssText =
       "background:#1c1c1c;border:1px solid #333;border-radius:10px;padding:10px;";
 
@@ -568,15 +571,63 @@ function renderWatchlist() {
     year.style.color = "#aaa";
     card.appendChild(year);
 
+    const label = document.createElement("p");
+    label.textContent = "Watch Status";
+    label.style.color = "#e50914";
+    card.appendChild(label);
+
+    const status = document.createElement("select");
+    status.style.cssText =
+      "width:100%;padding:10px;background:#222;color:white;border:1px solid #555;border-radius:6px;";
+
+    [
+      ["want", "🔖 Want to Watch"],
+      ["watching", "▶️ Watching"],
+      ["watched", "✅ Watched"]
+    ].forEach(([value, text]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = text;
+      status.appendChild(option);
+    });
+
+    status.value = movie.status || "want";
+
+    status.addEventListener("change", () => {
+      const updated = JSON.parse(
+        localStorage.getItem("virenWatchlist") || "[]"
+      );
+
+      const item = updated.find(
+        m => String(m.id) === String(movie.id)
+      );
+
+      if (item) {
+        item.status = status.value;
+        localStorage.setItem(
+          "virenWatchlist",
+          JSON.stringify(updated)
+        );
+      }
+    });
+
+    card.appendChild(status);
+
     const remove = document.createElement("button");
     remove.textContent = "Remove";
     remove.style.cssText =
-      "background:#e50914;color:white;border:0;padding:9px 14px;border-radius:6px;";
+      "background:#e50914;color:white;border:0;padding:9px 14px;border-radius:6px;margin-top:10px;";
+
     remove.addEventListener("click", () => {
       const updated = movies.filter(
         item => String(item.id) !== String(movie.id)
       );
-      localStorage.setItem("virenWatchlist", JSON.stringify(updated));
+
+      localStorage.setItem(
+        "virenWatchlist",
+        JSON.stringify(updated)
+      );
+
       renderWatchlist();
     });
 
@@ -584,6 +635,7 @@ function renderWatchlist() {
     container.appendChild(card);
   });
 }
+  
 
 renderWatchlist();
  </script>
