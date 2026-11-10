@@ -203,6 +203,43 @@ Cast: ${f.cast}`;
   showContent();
 }
 
+// MY WATCHLIST
+function getWatchlist() {
+  try {
+    return JSON.parse(localStorage.getItem("virenWatchlist") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function isInWatchlist(movie) {
+  return getWatchlist().some(
+    item => String(item.id) === String(movie.id)
+  );
+}
+
+function toggleWatchlist(movie) {
+  if (!movie || !movie.id) return false;
+
+  let list = getWatchlist();
+
+  if (isInWatchlist(movie)) {
+    list = list.filter(
+      item => String(item.id) !== String(movie.id)
+    );
+  } else {
+    list.push({
+      id: movie.id,
+      title: movie.title,
+      year: movie.year,
+      poster: movie.poster || ""
+    });
+  }
+
+  localStorage.setItem("virenWatchlist", JSON.stringify(list));
+  return isInWatchlist(movie);
+}
+
 function showContent(){
  const f=current;
  let title="",body="";
