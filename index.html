@@ -592,7 +592,11 @@ if(active==="explain"){
 function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 $("search").addEventListener("input",render);
 $("langBtn").onclick=()=>{lang=lang==="en"?"hi":"en";$("langBtn").textContent=lang==="en"?"हिंदी":"English";$("tagline").textContent=tr("MOVIES • REVIEWS • EXPLAINERS","फिल्में • रिव्यू • एक्सप्लेनर");$("welcome").textContent=tr("Find your next movie","अपनी अगली फिल्म खोजें");$("featured").textContent=tr("FEATURED MOVIES","लोकप्रिय फिल्में");$("search").placeholder=tr("Search a movie or series...","फिल्म या सीरीज़ खोजें...");$("note").textContent=tr("Starter edition: sample movie information is built in. Ratings are illustrative; verify details before publishing a review.","स्टार्टर संस्करण में उदाहरण के लिए फिल्म जानकारी दी गई है। रेटिंग सांकेतिक हैं; रिव्यू प्रकाशित करने से पहले जांचें।");if(current){$("movieMeta").textContent=`${current.year} • ${current.genre} • ★ ${current.rating}\n${tr("Director","निर्देशक")}: ${current.director}\n${tr("Cast","कलाकार")}: ${current.cast}`;showContent()}render();};
-$("backBtn").onclick=()=>{$("detail").classList.add("hidden");$("home").classList.remove("hidden");};
+$("backBtn").onclick=()=>{
+  $("detail").classList.add("hidden");
+  $("home").classList.remove("hidden");
+  renderRecentlyViewed();
+};
 $("reviewTab").onclick=()=>{active="review";showContent()};$("explainTab").onclick=()=>{active="explain";showContent()};$("scriptTab").onclick=()=>{active="script";showContent()};
 $("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText(currentText);$("copyBtn").textContent=tr("Copied!","कॉपी हो गया!");}catch(e){alert(currentText)}};
 $("shareBtn").onclick=async()=>{if(navigator.share){try{await navigator.share({title:current.title,text:currentText})}catch(e){}}else{await navigator.clipboard.writeText(current.title+"\n"+currentText);alert(tr("Copied for sharing","शेयर करने के लिए कॉपी किया गया"));}};
