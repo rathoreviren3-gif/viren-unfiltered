@@ -989,6 +989,13 @@ $("detail").appendChild(trailerButton);
   }
 });
         results.appendChild(card);
+       if (
+  openMovieIdAfterSearch &&
+  String(movie.id) === openMovieIdAfterSearch
+) {
+  openMovieIdAfterSearch = null;
+  card.click();
+       }
       });
 
     } catch (error) {
