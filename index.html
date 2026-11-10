@@ -476,6 +476,9 @@ watchlistButton.textContent = isInWatchlist(f)
 
 watchlistButton.addEventListener("click", () => {
   const saved = toggleWatchlist(f);
+ if (typeof window.renderWatchlist === "function") {
+  window.renderWatchlist();
+ }
   watchlistButton.textContent = saved
     ? "✓ Remove from My Watchlist"
     : "＋ Add to My Watchlist";
@@ -500,6 +503,74 @@ render();
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 </script>
 
+<section id="my-watchlist" style="padding:24px 16px;background:#090909;color:white;font-family:Arial,sans-serif;">
+  <h2 style="color:#e50914;">❤️ My Watchlist</h2>
+  <p style="color:#aaa;">Your saved movies to watch later.</p>
+  <div id="watchlist-movies" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;"></div>
+  <p id="watchlist-empty" style="color:#aaa;">Your watchlist is empty.</p>
+</section>
+ <script>
+function renderWatchlist() {
+  const container = document.getElementById("watchlist-movies");
+  const empty = document.getElementById("watchlist-empty");
+
+  if (!container || !empty) return;
+
+  let movies = [];
+  try {
+    movies = JSON.parse(
+      localStorage.getItem("virenWatchlist") || "[]"
+    );
+  } catch (error) {
+    movies = [];
+  }
+
+  container.replaceChildren();
+  empty.style.display = movies.length ? "none" : "block";
+
+  movies.forEach(movie => {
+    const card = document.createElement("div");
+    card.style.cssText =
+      "background:#1c1c1c;border:1px solid #333;border-radius:10px;padding:10px;";
+
+    if (movie.poster) {
+      const poster = document.createElement("img");
+      poster.src = movie.poster;
+      poster.alt = movie.title + " poster";
+      poster.style.cssText =
+        "width:100%;border-radius:8px;display:block;";
+      card.appendChild(poster);
+    }
+
+    const title = document.createElement("h3");
+    title.textContent = movie.title;
+    title.style.fontSize = "15px";
+    card.appendChild(title);
+
+    const year = document.createElement("p");
+    year.textContent = movie.year || "";
+    year.style.color = "#aaa";
+    card.appendChild(year);
+
+    const remove = document.createElement("button");
+    remove.textContent = "Remove";
+    remove.style.cssText =
+      "background:#e50914;color:white;border:0;padding:9px 14px;border-radius:6px;";
+    remove.addEventListener("click", () => {
+      const updated = movies.filter(
+        item => String(item.id) !== String(movie.id)
+      );
+      localStorage.setItem("virenWatchlist", JSON.stringify(updated));
+      renderWatchlist();
+    });
+
+    card.appendChild(remove);
+    container.appendChild(card);
+  });
+}
+
+renderWatchlist();
+ </script>
 <section id="live-movie-search" style="padding:24px 16px;background:#101010;color:white;font-family:Arial,sans-serif;">
   <h2 style="color:#e50914;">🎬 Explore Movies</h2>
   <p>Search movies from around the world.</p>
