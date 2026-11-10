@@ -689,7 +689,74 @@ renderWatchlist();
   const results = document.getElementById("movie-search-results");
   const status = document.getElementById("movie-search-status");
 
-  form.addEventListener("submit", async (event) => {
+  
+// MOVIE COLLECTIONS — LIVE TMDB
+window.loadCollection = async function(category) {
+  const grid = document.getElementById("collectionGrid");
+  const message = document.getElementById("collectionStatus");
+
+  if (!grid || !message) return;
+
+  grid.replaceChildren();
+  message.textContent = "Loading " + category + " movies...";
+
+  try {
+    const response = await fetch(
+      API + "/collections/" + encodeURIComponent(category)
+    );
+
+    if (!response.ok) throw new Error("Collection failed");
+
+    const data = await response.json();
+    const movies = data.results || [];
+
+    if (!movies.length) {
+      message.textContent = "No movies found.";
+      return;
+    }
+
+    movies.forEach(movie => {
+      const card = document.createElement("article");
+
+      card.style.cssText =
+        "background:#1c1c1c;border:1px solid #333;border-radius:10px;overflow:hidden;cursor:pointer;";
+
+      if (movie.poster_path) {
+        const poster = document.createElement("img");
+        poster.src =
+          "https://image.tmdb.org/t/p/w342" + movie.poster_path;
+        poster.alt = movie.title + " poster";
+        poster.loading = "lazy";
+        poster.style.cssText = "width:100%;display:block;";
+        card.appendChild(poster);
+      }
+
+      const title = document.createElement("h3");
+      title.textContent = movie.title;
+      title.style.cssText = "padding:10px;font-size:15px;";
+
+      card.appendChild(title);
+
+      card.addEventListener("click", () => {
+        input.value = movie.title;
+        form.requestSubmit();
+        document.getElementById("live-movie-search")
+          .scrollIntoView({behavior:"smooth"});
+      });
+
+      grid.appendChild(card);
+    });
+
+    message.textContent = movies.length +
+      " movies found. Select a movie to view details.";
+
+  } catch (error) {
+    message.textContent =
+      "Could not load collections. Please try again.";
+  }
+};
+ 
+ form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const query = input.value.trim();
