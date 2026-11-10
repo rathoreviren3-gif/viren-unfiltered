@@ -298,6 +298,7 @@ function showContent(){
 
  
 if(active==="review"){
+ const ratingsAPI = "https://viren-unfiltered-api.rathoreviren3.workers.dev";
   const ratingKey = "virenRating_" + (f.id || f.title);
   const savedRating = localStorage.getItem(ratingKey);
 
@@ -332,7 +333,7 @@ if(active==="review"){
   async function loadCommunityRating(){
     try {
       const response = await fetch(
-        API + "/ratings?movieId=" + encodeURIComponent(movieId)
+        ratingsAPI + "/ratings?movieId=" + encodeURIComponent(movieId)
       );
 
       if(!response.ok) throw new Error("Loading failed");
@@ -365,7 +366,7 @@ if(active==="review"){
     $("communityStatus").textContent = "Submitting rating...";
 
     try {
-      const response = await fetch(API + "/ratings", {
+      const response = await fetch(ratingsAPI + "/ratings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
