@@ -771,7 +771,10 @@ card.appendChild(info);
 
       card.addEventListener("click", () => {
         input.value = movie.title;
-form.requestSubmit();
+form.dispatchEvent(new Event("submit", {
+  bubbles: true,
+  cancelable: true
+}));
       });
 
       grid.appendChild(card);
