@@ -269,7 +269,75 @@ function toggleWatchlist(movie) {
   return isInWatchlist(movie);
 }
 
-function showContent(){
+// RECENTLY VIEWED MOVIES
+function getRecentlyViewed() {
+  try {
+    return JSON.parse(localStorage.getItem("virenRecentlyViewed")) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentlyViewed(movie) {
+  if (!movie || !movie.id) return;
+
+  let movies = getRecentlyViewed();
+
+  movies = movies.filter(item => String(item.id) !== String(movie.id));
+
+  movies.unshift({
+    id: movie.id,
+    title: movie.title,
+    year: movie.year || "",
+    poster: movie.poster || ""
+  });
+
+  movies = movies.slice(0, 10);
+
+  localStorage.setItem("virenRecentlyViewed", JSON.stringify(movies));
+  renderRecentlyViewed();
+}
+
+function renderRecentlyViewed() {
+  const grid = document.getElementById("recentlyViewedGrid");
+  const empty = document.getElementById("recentlyViewedEmpty");
+
+  if (!grid || !empty) return;
+
+  const movies = getRecentlyViewed();
+  grid.replaceChildren();
+
+  empty.style.display = movies.length ? "none" : "block";
+
+  movies.forEach(movie => {
+    const card = document.createElement("article");
+    card.style.cssText =
+      "background:#181818;border-radius:12px;overflow:hidden;cursor:pointer;";
+
+    if (movie.poster) {
+      const img = document.createElement("img");
+      img.src = movie.poster;
+      img.alt = movie.title + " poster";
+      img.style.cssText = "width:100%;display:block;aspect-ratio:2/3;object-fit:cover;";
+      card.appendChild(img);
+    }
+
+    const title = document.createElement("h3");
+    title.textContent = movie.title;
+    title.style.cssText = "padding:10px;font-size:14px;color:white;";
+    card.appendChild(title);
+
+    card.addEventListener("click", () => {
+      document.getElementById("movie-search-input").value = movie.title;
+      document.getElementById("movie-search-form").dispatchEvent(
+        new Event("submit", { bubbles:true, cancelable:true })
+      );
+    });
+
+    grid.appendChild(card);
+  });
+}
+ function showContent(){
  const f=current;
  let title="",body="";
 
