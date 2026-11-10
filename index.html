@@ -199,17 +199,62 @@ function showContent(){
     <p>${tr("Director","निर्देशक")}: ${escapeHtml(f.director)}
     \n${tr("Cast","कलाकार")}: ${escapeHtml(f.cast)}
     \n${tr("Rating shown in starter data","स्टार्टर डेटा में रेटिंग")}: ★ ${f.rating}/10</p>
-   </div>`:"");
+   </div>`:"")
+ +
+(active==="review" ? `
+<div class="panel">
+  <h3>🍅 VIREN UNFILTERED RATINGS</h3>
+
+  <div class="rating-card">
+    <h3>Viren Score</h3>
+    <p id="virenScore">Not rated yet</p>
+    <select id="virenRating">
+      <option value="">Rate this movie</option>
+      ${Array.from({length:10},(_,i)=>`<option value="${i+1}">${i+1}/10</option>`).join("")}
+    </select>
+    <button id="saveVirenRating" class="primary">Save My Rating</button>
+    <p id="virenRatingStatus"></p>
+  </div>
+
+  <div class="rating-card">
+    <h3>Audience Score</h3>
+    <p id="audienceScore">★ ${f.rating}/10</p>
+    <p>TMDB audience rating</p>
+  </div>
+</div>` : "");
 
  $("reviewTab").className=active==="review"?"":"secondary";
  $("explainTab").className=active==="explain"?"":"secondary";
  $("scriptTab").className=active==="script"?"":"secondary";
  $("copyBtn").textContent=tr("Copy text","टेक्स्ट कॉपी करें");
 
- if(active==="explain"){
+ if(active==="review"){
+  const ratingKey = "virenRating_" + (f.id || f.title);
+  const savedRating = localStorage.getItem(ratingKey);
+
+  if(savedRating){
+    $("virenScore").textContent = "★ " + savedRating + "/10";
+    $("virenRating").value = savedRating;
+  }
+
+  $("saveVirenRating").addEventListener("click", () => {
+    const rating = $("virenRating").value;
+
+    if(!rating){
+      $("virenRatingStatus").textContent = "Please select a rating first.";
+      return;
+    }
+
+    localStorage.setItem(ratingKey, rating);
+    $("virenScore").textContent = "★ " + rating + "/10";
+    $("virenRatingStatus").textContent = "Your Viren Score has been saved!";
+  });
+}
+
+if(active==="explain"){
   $("generateAI").addEventListener("click",generateExplanation);
   $("generateEnding").addEventListener("click", () => generateExplanation("ending"));
- }
+}
 }
  
 function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
