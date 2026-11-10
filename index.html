@@ -254,7 +254,6 @@ function showContent(){
 (active==="review" ? `
 <div class="panel ratings-panel">
   <h3>🍅 VIREN UNFILTERED RATINGS</h3>
-
   <div class="rating-card">
     <h3>Viren Score</h3>
     <p id="virenScore">Not rated yet</p>
@@ -272,6 +271,24 @@ function showContent(){
     <p>TMDB audience rating</p>
 <p>Based on ${Number(f.voteCount || 0).toLocaleString()} TMDB votes</p>
   </div>
+
+  
+<div class="rating-card">
+  <h3>Community Score</h3>
+  <p id="communityScore">★ --/10</p>
+  <p id="communityVotes">No community ratings yet</p>
+
+  <select id="communityRating">
+    <option value="">Rate this movie</option>
+    ${Array.from({length:10},(_,i)=>`<option value="${i+1}">${i+1}/10</option>`).join("")}
+  </select>
+
+  <button id="submitCommunityRating" class="primary">
+    Submit Community Rating
+  </button>
+  <p id="communityStatus"></p>
+</div>
+
 </div>` : "");
 
  $("reviewTab").className=active==="review"?"":"secondary";
@@ -279,7 +296,8 @@ function showContent(){
  $("scriptTab").className=active==="script"?"":"secondary";
  $("copyBtn").textContent=tr("Copy text","टेक्स्ट कॉपी करें");
 
- if(active==="review"){
+ 
+if(active==="review"){
   const ratingKey = "virenRating_" + (f.id || f.title);
   const savedRating = localStorage.getItem(ratingKey);
 
@@ -300,7 +318,92 @@ function showContent(){
     $("virenScore").textContent = "★ " + rating + "/10";
     $("virenRatingStatus").textContent = "Your Viren Score has been saved!";
   });
+
+  const movieId = String(f.id || f.title);
+  const voterKey = "virenCommunityVoter";
+
+  let voterId = localStorage.getItem(voterKey);
+
+  if(!voterId){
+    voterId = crypto.randomUUID();
+    localStorage.setItem(voterKey, voterId);
+  }
+
+  async function loadCommunityRating(){
+    try {
+      const response = await fetch(
+        API + "/ratings?movieId=" + encodeURIComponent(movieId)
+      );
+
+      if(!response.ok) throw new Error("Loading failed");
+
+      const data = await response.json();
+
+      $("communityScore").textContent =
+        "★ " + (data.count ? data.average : "--") + "/10";
+
+      $("communityVotes").textContent =
+        data.count + " community ratings";
+
+    } catch(error) {
+      $("communityStatus").textContent =
+        "Could not load community ratings.";
+    }
+  }
+
+  $("submitCommunityRating").addEventListener("click", async () => {
+    const rating = Number($("communityRating").value);
+
+    if(!rating || rating < 1 || rating > 10){
+      $("communityStatus").textContent =
+        "Please select a rating first.";
+      return;
+    }
+
+    const button = $("submitCommunityRating");
+    button.disabled = true;
+    $("communityStatus").textContent = "Submitting rating...";
+
+    try {
+      const response = await fetch(API + "/ratings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          movieId: movieId,
+          movieTitle: f.title,
+          rating: rating,
+          voterId: voterId
+        })
+      });
+
+      const data = await response.json();
+
+      if(!response.ok) {
+        throw new Error(data.error || "Submission failed");
+      }
+
+      $("communityScore").textContent =
+        "★ " + data.average + "/10";
+
+      $("communityVotes").textContent =
+        data.count + " community ratings";
+
+      $("communityStatus").textContent =
+        "Your community rating was saved!";
+
+    } catch(error) {
+      $("communityStatus").textContent =
+        error.message || "Could not submit rating.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  loadCommunityRating();
 }
+ 
 
 if(active==="explain"){
   $("generateAI").addEventListener("click",generateExplanation);
