@@ -277,6 +277,7 @@ function showContent(){
   <h3>Community Score</h3>
   <p id="communityScore">★ --/10</p>
   <p id="communityVotes">No community ratings yet</p>
+  <div id="communityBreakdown"></div>
 
   <select id="communityRating">
     <option value="">Rate this movie</option>
@@ -339,7 +340,29 @@ if(active==="review"){
       if(!response.ok) throw new Error("Loading failed");
 
       const data = await response.json();
+const breakdownBox = document.getElementById("communityBreakdown");
 
+if (breakdownBox) {
+  const distribution = data.distribution || [];
+  const totalVotes = Number(data.count || 0);
+
+  breakdownBox.innerHTML = distribution.map(item => {
+    const votes = Number(item.count || 0);
+    const percentage = totalVotes
+      ? (votes / totalVotes) * 100
+      : 0;
+
+    return `
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;">
+        <span style="width:30px;">${item.rating}/10</span>
+        <div style="flex:1;background:#333;height:8px;border-radius:8px;overflow:hidden;">
+          <div style="width:${percentage}%;background:#e50914;height:100%;"></div>
+        </div>
+        <span style="width:25px;text-align:right;">${votes}</span>
+      </div>
+    `;
+  }).join("");
+}
       $("communityScore").textContent =
         "★ " + (data.count ? data.average : "--") + "/10";
 
