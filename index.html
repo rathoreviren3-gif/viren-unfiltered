@@ -201,6 +201,7 @@ function showContent(){
 
  if(active==="explain"){
   $("generateAI").addEventListener("click",generateExplanation);
+  $("generateEnding").addEventListener("click", () => generateExplanation("ending"));
  }
 }
  
