@@ -1048,7 +1048,8 @@ if (oldTrailerButton) oldTrailerButton.remove();
 
 trailerButton.id = "trailer-button";
 $("detail").appendChild(trailerButton);
-    showContent();
+    saveRecentlyViewed(current);
+   showContent();
 
     status.textContent = "";
 
