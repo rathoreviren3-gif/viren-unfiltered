@@ -220,6 +220,7 @@ function showContent(){
     <h3>Audience Score</h3>
     <p id="audienceScore">★ ${f.rating}/10</p>
     <p>TMDB audience rating</p>
+<p>Based on ${Number(f.voteCount || 0).toLocaleString()} TMDB votes</p>
   </div>
 </div>` : "");
 
@@ -422,6 +423,7 @@ trailerButton.onclick = () => {
       rating: movie.vote_average
         ? movie.vote_average.toFixed(1)
         : "N/A",
+     voteCount: movie.vote_count || 0,
       director,
       cast,
       en: synopsis,
