@@ -114,6 +114,19 @@ footer{text-align:center;color:#777;font-size:10px;padding:25px 10px}
 <input id="search" type="search" placeholder="Search a movie or series..." autocomplete="off">
 <div class="sectionhead"><strong id="featured">FEATURED MOVIES</strong><span class="small muted" id="count"></span></div>
 <div class="grid" id="movieGrid"></div>
+ <section id="movie-collections" style="padding:20px 0;">
+  <h2 style="color:#e50914;">🎬 Movie Collections</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+    <button onclick="loadCollection('action')">Action</button>
+    <button onclick="loadCollection('horror')">Horror</button>
+    <button onclick="loadCollection('scifi')">Sci-Fi</button>
+    <button onclick="loadCollection('comedy')">Comedy</button>
+    <button onclick="loadCollection('romance')">Romance</button>
+    <button onclick="loadCollection('drama')">Drama</button>
+  </div>
+  <div id="collectionGrid" class="grid"></div>
+  <p id="collectionStatus" class="small muted"></p>
+ </section>
 <div class="notice" id="note">Starter edition: sample movie information is built in. Ratings are illustrative; verify details before publishing a review.</div>
 </section>
 <section id="detail" class="hidden">
