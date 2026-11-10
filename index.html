@@ -648,20 +648,24 @@ trailerButton.onclick = () => {
   window.open("https://www.youtube.com/results?search_query=" + query, "_blank");
 };
     current = {
-      title: movie.title,
-      year,
-      genre: genres,
-      rating: movie.vote_average
-        ? movie.vote_average.toFixed(1)
-        : "N/A",
-     voteCount: movie.vote_count || 0,
-      director,
-      cast,
-      en: synopsis,
-      hi: hindiSynopsis,
-      aiExEn: "",
-aiExHi: ""
-    };
+  id: movie.id,
+  title: movie.title,
+  year,
+  genre: genres,
+  rating: movie.vote_average
+    ? movie.vote_average.toFixed(1)
+    : "N/A",
+  voteCount: movie.vote_count || 0,
+  director,
+  cast,
+  en: synopsis,
+  hi: hindiSynopsis,
+  poster: movie.poster_path
+    ? "https://image.tmdb.org/t/p/w342" + movie.poster_path
+    : "",
+  aiExEn: "",
+  aiExHi: ""
+};
 
     active = "review";
 
