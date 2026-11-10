@@ -38,6 +38,52 @@ input:focus{border-color:var(--red)}
 footer{text-align:center;color:#777;font-size:10px;padding:25px 10px}
 .notice{background:#211b0b;border:1px solid #59451b;color:#e8d6a2;padding:12px;border-radius:10px;font-size:12px;line-height:1.5;margin-top:16px}
 @media(min-width:600px){.poster{height:145px}}
+ /* VIREN UNFILTERED RATING DESIGN */
+
+.ratings-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  border: 1px solid #e50914;
+}
+
+.ratings-panel > h3 {
+  grid-column: 1 / -1;
+  color: #e50914;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.ratings-panel .rating-card {
+  background: #181818;
+  border: 1px solid #383838;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.ratings-panel .rating-card h3 {
+  color: white;
+}
+
+.ratings-panel .rating-card p:first-of-type {
+  font-size: 25px;
+  font-weight: bold;
+  color: #e50914;
+  margin: 12px 0;
+}
+
+.ratings-panel .rating-card select,
+.ratings-panel .rating-card button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .ratings-panel {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 <body>
@@ -194,7 +240,7 @@ function showContent(){
 <p id="endingStatus"></p>`:""}
   </div>`+
  (active==="review"?
-  `<div class="panel">
+  `<div class="panel ratings-panel">
     <h3>${tr("MOVIE INFORMATION","फिल्म की जानकारी")}</h3>
     <p>${tr("Director","निर्देशक")}: ${escapeHtml(f.director)}
     \n${tr("Cast","कलाकार")}: ${escapeHtml(f.cast)}
