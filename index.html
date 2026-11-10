@@ -91,9 +91,25 @@ footer{text-align:center;color:#777;font-size:10px;padding:25px 10px}
 </style>
 </head>
 <body>
-<header><div class="headerrow"><div><div class="brand">VIREN</div><div class="name">UNFILTERED</div><div class="tag" id="tagline">MOVIES • REVIEWS • EXPLAINERS</div></div><button class="secondary" id="langBtn">हिंदी</button></div></header>
+<header>
+  <div class="headerrow">
+    <div>
+      <div class="brand">VIREN</div>
+      <div class="name">UNFILTERED</div>
+      <div class="tag" id="tagline">MOVIES • REVIEWS • EXPLAINERS</div>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="secondary" id="watchlistBtn"
+        onclick="document.getElementById('my-watchlist').scrollIntoView({behavior:'smooth'});">
+        ❤️ Watchlist
+      </button>
+      <button class="secondary" id="langBtn">हिंदी</button>
+    </div>
+  </div>
+</header>
 <main>
-<section id="home">
+\u003Cdiv class=\"notice\" id=\"note\">Starter edition: sample movie information is built in. Ratings are illustrative; verify details before publishing a review.\u003C/div><section id="home">
 <h2 id="welcome">Find your next movie</h2>
 <input id="search" type="search" placeholder="Search a movie or series..." autocomplete="off">
 <div class="sectionhead"><strong id="featured">FEATURED MOVIES</strong><span class="small muted" id="count"></span></div>
