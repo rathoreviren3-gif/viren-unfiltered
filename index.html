@@ -69,7 +69,7 @@ const films=[
 ];
 let lang="en",current=null,active="review",currentText="";
  
-async function generateExplanation(){
+async function generateExplanation(mode = "explain"){
  const f=current;
  const button=$("generateAI");
  const status=$("aiStatus");
