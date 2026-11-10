@@ -688,6 +688,7 @@ renderWatchlist();
   const input = document.getElementById("movie-search-input");
   const results = document.getElementById("movie-search-results");
   const status = document.getElementById("movie-search-status");
+ let openMovieIdAfterSearch = null;
 
   
 // MOVIE COLLECTIONS — LIVE TMDB
@@ -770,12 +771,14 @@ card.appendChild(info);
 
 
       card.addEventListener("click", () => {
-        input.value = movie.title;
-form.dispatchEvent(new Event("submit", {
-  bubbles: true,
-  cancelable: true
-}));
-      });
+  openMovieIdAfterSearch = String(movie.id);
+  input.value = movie.title;
+
+  form.dispatchEvent(new Event("submit", {
+    bubbles: true,
+    cancelable: true
+  }));
+});
 
       grid.appendChild(card);
     });
