@@ -718,24 +718,56 @@ window.loadCollection = async function(category) {
     movies.forEach(movie => {
       const card = document.createElement("article");
 
-      card.style.cssText =
-        "background:#1c1c1c;border:1px solid #333;border-radius:10px;overflow:hidden;cursor:pointer;";
+      
+card.style.cssText =
+  "background:#181818;border:1px solid #333;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .25s,border-color .25s;";
 
-      if (movie.poster_path) {
-        const poster = document.createElement("img");
-        poster.src =
-          "https://image.tmdb.org/t/p/w342" + movie.poster_path;
-        poster.alt = movie.title + " poster";
-        poster.loading = "lazy";
-        poster.style.cssText = "width:100%;display:block;";
-        card.appendChild(poster);
-      }
+card.onmouseenter = () => {
+  card.style.transform = "translateY(-5px)";
+  card.style.borderColor = "#e50914";
+};
 
-      const title = document.createElement("h3");
-      title.textContent = movie.title;
-      title.style.cssText = "padding:10px;font-size:15px;";
+card.onmouseleave = () => {
+  card.style.transform = "translateY(0)";
+  card.style.borderColor = "#333";
+};
 
-      card.appendChild(title);
+if (movie.poster_path) {
+  const poster = document.createElement("img");
+  poster.src =
+    "https://image.tmdb.org/t/p/w342" + movie.poster_path;
+  poster.alt = movie.title + " poster";
+  poster.loading = "lazy";
+  poster.style.cssText =
+    "width:100%;aspect-ratio:2/3;object-fit:cover;display:block;";
+  card.appendChild(poster);
+}
+
+const info = document.createElement("div");
+info.style.cssText = "padding:12px;";
+
+const title = document.createElement("h3");
+title.textContent = movie.title;
+title.style.cssText =
+  "font-size:15px;margin:0 0 8px;color:white;";
+
+const year = document.createElement("p");
+year.textContent = movie.release_date
+  ? movie.release_date.slice(0, 4)
+  : "Year unavailable";
+year.style.cssText = "color:#aaa;font-size:13px;margin:5px 0;";
+
+const rating = document.createElement("p");
+rating.textContent = "★ " +
+  (movie.vote_average
+    ? movie.vote_average.toFixed(1) + "/10"
+    : "Not rated");
+rating.style.cssText =
+  "color:#f5c518;font-size:14px;margin:5px 0;";
+
+info.append(title, year, rating);
+card.appendChild(info);
+
 
       card.addEventListener("click", () => {
         input.value = movie.title;
