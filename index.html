@@ -638,6 +638,20 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
     Refresh Top Rated Movies
   </button>
 </section>
+ <!-- POPULAR TV SERIES -->
+<section id="popular-tv-series" style="padding:20px 0;">
+  <h2 style="color:#e50914;">📺 Popular TV Series</h2>
+
+  <div id="popularTvGrid" class="grid"></div>
+
+  <p id="popularTvStatus" class="small muted">
+    Loading popular TV series...
+  </p>
+
+  <button onclick="loadPopularTV()">
+    Refresh TV Series
+  </button>
+</section>
  <section id="upcoming-movies" style="padding:20px 0;">
   <h2 style="color:#e50914;">🎬 Upcoming Movies</h2>
   <div id="upcomingGrid" class="grid"></div>
