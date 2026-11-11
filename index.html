@@ -877,6 +877,94 @@ card.appendChild(info);
       "Could not load collections. Please try again.";
   }
 };
+ // UPCOMING MOVIES
+async function loadUpcomingMovies() {
+  const grid = document.getElementById("upcomingGrid");
+  const status = document.getElementById("upcomingStatus");
+
+  if (!grid || !status) return;
+
+  try {
+    status.textContent = "Loading upcoming movies...";
+
+    const response = await fetch(API + "/upcoming");
+    if (!response.ok) throw new Error("Loading failed");
+
+    const data = await response.json();
+    const today = new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Kolkata"
+    });
+
+    const movies = (data.results || [])
+      .filter(movie =>
+        movie.release_date && movie.release_date >= today
+      )
+      .sort((a, b) =>
+        a.release_date.localeCompare(b.release_date)
+      );
+
+    grid.replaceChildren();
+
+    if (!movies.length) {
+      status.textContent = "No upcoming movies found.";
+      return;
+    }
+
+    movies.forEach(movie => {
+      const card = document.createElement("article");
+
+      card.style.cssText =
+        "background:#181818;border:1px solid #333;border-radius:12px;overflow:hidden;cursor:pointer;";
+
+      if (movie.poster_path) {
+        const img = document.createElement("img");
+        img.src =
+          "https://image.tmdb.org/t/p/w342" + movie.poster_path;
+        img.alt = movie.title + " poster";
+        img.loading = "lazy";
+        img.style.cssText =
+          "width:100%;display:block;aspect-ratio:2/3;object-fit:cover;";
+        card.appendChild(img);
+      }
+
+      const info = document.createElement("div");
+      info.style.padding = "12px";
+
+      const title = document.createElement("h3");
+      title.textContent = movie.title;
+      title.style.cssText =
+        "color:white;font-size:15px;margin:0 0 8px;";
+
+      const date = document.createElement("p");
+      date.textContent = "Release: " + movie.release_date;
+      date.style.cssText = "color:#aaa;font-size:13px;";
+
+      info.append(title, date);
+      card.appendChild(info);
+
+      card.addEventListener("click", () => {
+        openMovieIdAfterSearch = String(movie.id);
+        input.value = movie.title;
+
+        form.dispatchEvent(new Event("submit", {
+          bubbles: true,
+          cancelable: true
+        }));
+      });
+
+      grid.appendChild(card);
+    });
+
+    status.textContent =
+      movies.length + " upcoming movies found.";
+
+  } catch (error) {
+    status.textContent =
+      "Could not load upcoming movies. Please try again.";
+  }
+}
+
+loadUpcomingMovies();
  
  form.addEventListener("submit", async (event) => {
     event.preventDefault();
