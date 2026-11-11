@@ -1218,14 +1218,8 @@ window.loadPopularTV = async function() {
       card.appendChild(info);
 
       card.addEventListener("click", () => {
-        openMovieIdAfterSearch = String(show.id);
-        input.value = show.name;
-
-        form.dispatchEvent(new Event("submit", {
-          bubbles: true,
-          cancelable: true
-        }));
-      });
+  openTVDetails(show.id);
+});
 
       grid.appendChild(card);
     });
