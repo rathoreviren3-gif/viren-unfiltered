@@ -891,9 +891,16 @@ async function loadUpcomingMovies() {
     if (!response.ok) throw new Error("Loading failed");
 
     const data = await response.json();
-    const today = new Date().toLocaleDateString("en-CA", {
-      timeZone: "Asia/Kolkata"
-    });
+    const parts = new Intl.DateTimeFormat("en", {
+  timeZone: "Asia/Kolkata",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+}).formatToParts(new Date());
+
+const today = parts.find(p => p.type === "year").value + "-" +
+  parts.find(p => p.type === "month").value + "-" +
+  parts.find(p => p.type === "day").value;
 
     const movies = (data.results || [])
       .filter(movie =>
