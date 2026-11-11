@@ -1159,6 +1159,87 @@ window.loadTopRatedMovies = async function() {
 };
 
 loadTopRatedMovies();
+ // POPULAR TV SERIES
+window.loadPopularTV = async function() {
+  const grid = document.getElementById("popularTvGrid");
+  const status = document.getElementById("popularTvStatus");
+
+  if (!grid || !status) return;
+
+  status.textContent = "Loading popular TV series...";
+
+  try {
+    const response = await fetch(API + "/popular-tv");
+    if (!response.ok) throw new Error("Loading failed");
+
+    const data = await response.json();
+    const shows = data.results || [];
+
+    grid.replaceChildren();
+
+    shows.forEach(show => {
+      const card = document.createElement("article");
+
+      card.style.cssText =
+        "background:#181818;border:1px solid #333;border-radius:12px;overflow:hidden;cursor:pointer;";
+
+      if (show.poster_path) {
+        const img = document.createElement("img");
+        img.src = "https://image.tmdb.org/t/p/w342" + show.poster_path;
+        img.alt = show.name + " poster";
+        img.loading = "lazy";
+        img.style.cssText =
+          "width:100%;aspect-ratio:2/3;object-fit:cover;display:block;";
+        card.appendChild(img);
+      }
+
+      const info = document.createElement("div");
+      info.style.padding = "12px";
+
+      const title = document.createElement("h3");
+      title.textContent = show.name;
+      title.style.cssText =
+        "color:white;font-size:15px;margin:0 0 8px;";
+
+      const rating = document.createElement("p");
+      rating.textContent = "★ " +
+        (show.vote_average
+          ? show.vote_average.toFixed(1) + "/10"
+          : "Not rated");
+      rating.style.cssText = "color:#f5c518;font-size:14px;";
+
+      const year = document.createElement("p");
+      year.textContent = show.first_air_date
+        ? show.first_air_date.slice(0, 4)
+        : "Year unavailable";
+      year.style.cssText = "color:#aaa;font-size:13px;";
+
+      info.append(title, rating, year);
+      card.appendChild(info);
+
+      card.addEventListener("click", () => {
+        openMovieIdAfterSearch = String(show.id);
+        input.value = show.name;
+
+        form.dispatchEvent(new Event("submit", {
+          bubbles: true,
+          cancelable: true
+        }));
+      });
+
+      grid.appendChild(card);
+    });
+
+    status.textContent =
+      shows.length + " popular TV series found.";
+
+  } catch (error) {
+    status.textContent =
+      "Could not load TV series. Please try again.";
+  }
+};
+
+loadPopularTV();
  
  form.addEventListener("submit", async (event) => {
     event.preventDefault();
