@@ -610,6 +610,20 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
   <div id="watchlist-movies" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;"></div>
   <p id="watchlist-empty" style="color:#aaa;">Your watchlist is empty.</p>
 </section>
+ <!-- TRENDING MOVIES -->
+<section id="trending-movies" style="padding:20px 0;">
+  <h2 style="color:#e50914;">🔥 Trending Movies</h2>
+
+  <div id="trendingGrid" class="grid"></div>
+
+  <p id="trendingStatus" class="small muted">
+    Loading trending movies...
+  </p>
+
+  <button onclick="loadTrendingMovies()">
+    Refresh Trending Movies
+  </button>
+</section>
  <section id="upcoming-movies" style="padding:20px 0;">
   <h2 style="color:#e50914;">🎬 Upcoming Movies</h2>
   <div id="upcomingGrid" class="grid"></div>
