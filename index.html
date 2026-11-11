@@ -638,6 +638,17 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
     Refresh Top Rated Movies
   </button>
 </section>
+ <!-- TV SERIES DETAILS -->
+<section id="tv-details-panel"
+  style="display:none;padding:20px;background:#181818;border-radius:12px;margin:20px 0;">
+
+  <button onclick="closeTVDetails()"
+    style="background:#e50914;color:white;padding:10px 16px;border:0;border-radius:8px;">
+    ← Back to TV Series
+  </button>
+
+  <div id="tvDetailsContent"></div>
+</section>
  <!-- POPULAR TV SERIES -->
 <section id="popular-tv-series" style="padding:20px 0;">
   <h2 style="color:#e50914;">📺 Popular TV Series</h2>
