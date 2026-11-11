@@ -1070,6 +1070,81 @@ window.loadTrendingMovies = async function() {
 };
 
 loadTrendingMovies();
+ // TOP RATED MOVIES
+window.loadTopRatedMovies = async function() {
+  const grid = document.getElementById("topRatedGrid");
+  const status = document.getElementById("topRatedStatus");
+
+  if (!grid || !status) return;
+
+  status.textContent = "Loading top rated movies...";
+
+  try {
+    const response = await fetch(API + "/top-rated");
+    if (!response.ok) throw new Error("Loading failed");
+
+    const data = await response.json();
+    const movies = data.results || [];
+
+    grid.replaceChildren();
+
+    movies.forEach(movie => {
+      const card = document.createElement("article");
+
+      card.style.cssText =
+        "background:#181818;border:1px solid #333;border-radius:12px;overflow:hidden;cursor:pointer;";
+
+      if (movie.poster_path) {
+        const img = document.createElement("img");
+        img.src = "https://image.tmdb.org/t/p/w342" + movie.poster_path;
+        img.alt = movie.title + " poster";
+        img.loading = "lazy";
+        img.style.cssText =
+          "width:100%;aspect-ratio:2/3;object-fit:cover;display:block;";
+        card.appendChild(img);
+      }
+
+      const info = document.createElement("div");
+      info.style.padding = "12px";
+
+      const title = document.createElement("h3");
+      title.textContent = movie.title;
+      title.style.cssText =
+        "color:white;font-size:15px;margin:0 0 8px;";
+
+      const rating = document.createElement("p");
+      rating.textContent = "★ " +
+        (movie.vote_average
+          ? movie.vote_average.toFixed(1) + "/10"
+          : "Not rated");
+      rating.style.cssText = "color:#f5c518;font-size:14px;";
+
+      info.append(title, rating);
+      card.appendChild(info);
+
+      card.addEventListener("click", () => {
+        openMovieIdAfterSearch = String(movie.id);
+        input.value = movie.title;
+
+        form.dispatchEvent(new Event("submit", {
+          bubbles: true,
+          cancelable: true
+        }));
+      });
+
+      grid.appendChild(card);
+    });
+
+    status.textContent =
+      movies.length + " top rated movies found.";
+
+  } catch (error) {
+    status.textContent =
+      "Could not load top rated movies. Please try again.";
+  }
+};
+
+loadTopRatedMovies();
  
  form.addEventListener("submit", async (event) => {
     event.preventDefault();
