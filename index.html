@@ -1170,6 +1170,69 @@ window.loadTopRatedMovies = async function() {
 };
 
 loadTopRatedMovies();
+ 
+window.closeTVDetails = function () {
+  document.getElementById("tv-details-panel").style.display = "none";
+  document.getElementById("popular-tv-series")
+    .scrollIntoView({ behavior: "smooth" });
+};
+
+window.openTVDetails = async function (tvId) {
+  const panel = document.getElementById("tv-details-panel");
+  const content = document.getElementById("tvDetailsContent");
+
+  panel.style.display = "block";
+  content.textContent = "Loading TV series details...";
+
+  try {
+    const response = await fetch(API + "/tv/" + tvId);
+    if (!response.ok) throw new Error("TV details failed");
+
+    const show = await response.json();
+
+    content.replaceChildren();
+
+    const title = document.createElement("h2");
+    title.textContent = show.name || "Untitled series";
+
+    const poster = document.createElement("img");
+    poster.src = show.poster_path
+      ? "https://image.tmdb.org/t/p/w500" + show.poster_path
+      : "";
+    poster.alt = (show.name || "TV series") + " poster";
+    poster.style.cssText =
+      "width:180px;max-width:100%;border-radius:10px;margin:12px 0;";
+
+    const rating = document.createElement("p");
+    rating.textContent = "⭐ Rating: " +
+      (show.vote_average ? show.vote_average.toFixed(1) : "Not rated");
+
+    const meta = document.createElement("p");
+    meta.textContent =
+      "Seasons: " + (show.number_of_seasons || 0) +
+      " • Episodes: " + (show.number_of_episodes || 0);
+
+    const overview = document.createElement("p");
+    overview.textContent = show.overview || "Synopsis unavailable.";
+    overview.style.cssText = "color:#ccc;line-height:1.6;";
+
+    const cast = document.createElement("p");
+    cast.textContent = "Cast: " +
+      (show.aggregate_credits?.cast || [])
+        .slice(0, 8)
+        .map(person => person.name)
+        .join(", ") || "Cast unavailable.";
+
+    content.append(title, poster, rating, meta, overview, cast);
+
+    panel.scrollIntoView({ behavior: "smooth" });
+
+  } catch (error) {
+    content.textContent =
+      "Could not load TV series details. Please try again.";
+  }
+};
+ 
  // POPULAR TV SERIES
 window.loadPopularTV = async function() {
   const grid = document.getElementById("popularTvGrid");
