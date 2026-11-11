@@ -624,6 +624,20 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.
     Refresh Trending Movies
   </button>
 </section>
+ <!-- TOP RATED MOVIES -->
+<section id="top-rated-movies" style="padding:20px 0;">
+  <h2 style="color:#e50914;">⭐ Top Rated Movies</h2>
+
+  <div id="topRatedGrid" class="grid"></div>
+
+  <p id="topRatedStatus" class="small muted">
+    Loading top rated movies...
+  </p>
+
+  <button onclick="loadTopRatedMovies()">
+    Refresh Top Rated Movies
+  </button>
+</section>
  <section id="upcoming-movies" style="padding:20px 0;">
   <h2 style="color:#e50914;">🎬 Upcoming Movies</h2>
   <div id="upcomingGrid" class="grid"></div>
